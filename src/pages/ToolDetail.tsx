@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useToolStore } from '@/store/toolStore';
 import { ArrowLeft, Heart, Star, Share2, Copy, Check, Wrench } from 'lucide-react';
 import * as Icons from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -63,7 +63,9 @@ export function ToolDetail() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  addToHistory(tool.id);
+  useEffect(() => {
+    addToHistory(tool.id);
+  }, [tool.id]);
 
   const ToolInterface = () => {
     switch (tool.id) {
