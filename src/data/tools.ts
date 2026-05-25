@@ -6,6 +6,7 @@ export interface Tool {
   icon: string;
   rating: number;
   usageCount: number;
+  path: string;
 }
 
 export const categories = [
@@ -26,6 +27,7 @@ export const tools: Tool[] = [
     icon: 'Activity',
     rating: 4.8,
     usageCount: 12580,
+    path: 'bmi-calculator',
   },
   {
     id: '2',
@@ -35,6 +37,7 @@ export const tools: Tool[] = [
     icon: 'Coins',
     rating: 4.9,
     usageCount: 23450,
+    path: 'currency-converter',
   },
   {
     id: '3',
@@ -44,6 +47,7 @@ export const tools: Tool[] = [
     icon: 'Lock',
     rating: 4.7,
     usageCount: 18920,
+    path: 'password-generator',
   },
   {
     id: '4',
@@ -53,6 +57,7 @@ export const tools: Tool[] = [
     icon: 'FileJson',
     rating: 4.6,
     usageCount: 15670,
+    path: 'json-formatter',
   },
   {
     id: '5',
@@ -62,6 +67,7 @@ export const tools: Tool[] = [
     icon: 'Link',
     rating: 4.5,
     usageCount: 9870,
+    path: 'url-encoder',
   },
   {
     id: '6',
@@ -71,6 +77,7 @@ export const tools: Tool[] = [
     icon: 'Mail',
     rating: 4.4,
     usageCount: 8760,
+    path: 'email-validator',
   },
   {
     id: '7',
@@ -80,6 +87,7 @@ export const tools: Tool[] = [
     icon: 'Palette',
     rating: 4.8,
     usageCount: 14520,
+    path: 'color-picker',
   },
   {
     id: '8',
@@ -89,6 +97,7 @@ export const tools: Tool[] = [
     icon: 'Clock',
     rating: 4.6,
     usageCount: 11230,
+    path: 'timestamp-converter',
   },
   {
     id: '9',
@@ -98,6 +107,7 @@ export const tools: Tool[] = [
     icon: 'Globe',
     rating: 4.3,
     usageCount: 7650,
+    path: 'ip-validator',
   },
   {
     id: '10',
@@ -107,6 +117,7 @@ export const tools: Tool[] = [
     icon: 'Binary',
     rating: 4.5,
     usageCount: 10340,
+    path: 'base64-converter',
   },
   {
     id: '11',
@@ -116,6 +127,7 @@ export const tools: Tool[] = [
     icon: 'Shuffle',
     rating: 4.4,
     usageCount: 8920,
+    path: 'random-number-generator',
   },
   {
     id: '12',
@@ -125,5 +137,6 @@ export const tools: Tool[] = [
     icon: 'Code2',
     rating: 4.7,
     usageCount: 12890,
+    path: 'html-formatter',
   },
 ];

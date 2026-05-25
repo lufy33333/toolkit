@@ -41,7 +41,7 @@ export function ToolCard({ tool, showFavorite = true }: ToolCardProps) {
 
   return (
     <Link
-      to={`/tools/${tool.id}`}
+      to={`/tools/${tool.path}`}
       className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1"
     >
       <div className="flex items-start justify-between mb-4">
