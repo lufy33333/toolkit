@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/store/userStore';
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
 
 export function Signup() {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const { signup, isLoggedIn } = useUserStore();
+  const { signup, isLoggedIn, isLoading, error, clearError } = useUserStore();
   const navigate = useNavigate();
 
   if (isLoggedIn) {
@@ -18,28 +17,56 @@ export function Signup() {
     return null;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
-    if (!name || !email || !password || !confirmPassword) {
-      setError('请填写所有字段');
+    clearError();
+
+    if (!username || !email || !password || !confirmPassword) {
       return;
     }
-    
+
     if (password !== confirmPassword) {
-      setError('两次输入的密码不一致');
       return;
     }
-    
+
     if (password.length < 6) {
-      setError('密码长度至少为6位');
       return;
     }
-    
-    signup(name, email, password);
-    navigate('/dashboard');
+
+    try {
+      await signup(username, email, password);
+      navigate('/dashboard');
+    } catch {
+    }
   };
+
+  const getErrorMessage = () => {
+    if (!email || !password || !username || !confirmPassword) {
+      return '请填写所有字段';
+    }
+    if (password !== confirmPassword) {
+      return '两次输入的密码不一致';
+    }
+    if (password.length < 6) {
+      return '密码长度至少为6位';
+    }
+    return error;
+  };
+
+  const showValidationError = () => {
+    if (!username || !email || !password || !confirmPassword) {
+      return '请填写所有字段';
+    }
+    if (password !== confirmPassword) {
+      return '两次输入的密码不一致';
+    }
+    if (password.length < 6) {
+      return '密码长度至少为6位';
+    }
+    return null;
+  };
+
+  const validationError = showValidationError();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 pt-16 flex items-center justify-center">
@@ -52,28 +79,29 @@ export function Signup() {
             <h1 className="text-2xl font-bold text-gray-900">创建账户</h1>
             <p className="text-gray-500 mt-2">注册后可以保存收藏和查看使用历史</p>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
+            {(error || validationError) && (
               <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm">
-                {error}
+                {error || validationError}
               </div>
             )}
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">用户名</label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   placeholder="请输入用户名"
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">邮箱地址</label>
               <div className="relative">
@@ -83,11 +111,12 @@ export function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@email.com"
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">密码</label>
               <div className="relative">
@@ -97,7 +126,8 @@ export function Signup() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="请输入密码"
-                  className="w-full pl-12 pr-12 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-12 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
                 />
                 <button
                   type="button"
@@ -108,7 +138,7 @@ export function Signup() {
                 </button>
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">确认密码</label>
               <div className="relative">
@@ -118,20 +148,31 @@ export function Signup() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="请再次输入密码"
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
-            
+
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all flex items-center justify-center gap-2"
+              disabled={isLoading || !!validationError}
+              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              注册
-              <ArrowRight className="w-5 h-5" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  注册中...
+                </>
+              ) : (
+                <>
+                  注册
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </button>
           </form>
-          
+
           <div className="mt-6 text-center">
             <p className="text-gray-500 text-sm">
               已有账户？{' '}

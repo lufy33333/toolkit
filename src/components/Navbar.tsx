@@ -58,13 +58,13 @@ export function Navbar() {
                 </Link>
                 <div className="relative cursor-pointer group">
                   <img
-                    src={user?.avatar}
-                    alt={user?.name}
+                    src={user?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username}`}
+                    alt={user?.username}
                     className="w-8 h-8 rounded-full bg-gray-200 object-cover"
                   />
                   <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                     <div className="p-4">
-                      <p className="font-medium text-gray-900">{user?.name}</p>
+                      <p className="font-medium text-gray-900">{user?.username}</p>
                       <p className="text-sm text-gray-500">{user?.email}</p>
                     </div>
                     <div className="border-t border-gray-100">

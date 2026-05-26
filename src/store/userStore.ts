@@ -1,49 +1,72 @@
 import { create } from 'zustand';
+import { apiService } from '@/lib/api';
 
 interface User {
   id: string;
   email: string;
-  name: string;
-  avatar: string;
+  username: string;
+  avatarUrl?: string;
 }
 
 interface UserStore {
   user: User | null;
   isLoggedIn: boolean;
-  login: (email: string, password: string) => void;
-  signup: (name: string, email: string, password: string) => void;
+  isLoading: boolean;
+  error: string | null;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  clearError: () => void;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
   user: null,
-  isLoggedIn: false,
+  isLoggedIn: !!localStorage.getItem('accessToken'),
+  isLoading: false,
+  error: null,
 
-  login: (email, password) => {
-    set({
-      user: {
-        id: '1',
-        email,
-        name: email.split('@')[0],
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-      },
-      isLoggedIn: true,
-    });
+  login: async (email, password) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await apiService.login({ email, password });
+      set({
+        user: response.user,
+        isLoggedIn: true,
+        isLoading: false,
+      });
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : '登录失败',
+        isLoading: false,
+      });
+      throw error;
+    }
   },
 
-  signup: (name, email, password) => {
-    set({
-      user: {
-        id: '1',
-        email,
-        name,
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`,
-      },
-      isLoggedIn: true,
-    });
+  signup: async (username, email, password) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await apiService.register({ email, password, username });
+      set({
+        user: response.user,
+        isLoggedIn: true,
+        isLoading: false,
+      });
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : '注册失败',
+        isLoading: false,
+      });
+      throw error;
+    }
   },
 
   logout: () => {
+    apiService.logout();
     set({ user: null, isLoggedIn: false });
+  },
+
+  clearError: () => {
+    set({ error: null });
   },
 }));

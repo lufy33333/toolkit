@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserStore } from '@/store/userStore';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const { login, isLoggedIn } = useUserStore();
+  const { login, isLoggedIn, isLoading, error, clearError } = useUserStore();
   const navigate = useNavigate();
 
   if (isLoggedIn) {
@@ -16,17 +15,19 @@ export function Login() {
     return null;
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    
+    clearError();
+
     if (!email || !password) {
-      setError('请填写邮箱和密码');
       return;
     }
-    
-    login(email, password);
-    navigate('/dashboard');
+
+    try {
+      await login(email, password);
+      navigate('/dashboard');
+    } catch {
+    }
   };
 
   return (
@@ -40,14 +41,14 @@ export function Login() {
             <h1 className="text-2xl font-bold text-gray-900">欢迎回来</h1>
             <p className="text-gray-500 mt-2">登录您的账户</p>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm">
                 {error}
               </div>
             )}
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">邮箱地址</label>
               <div className="relative">
@@ -57,11 +58,12 @@ export function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@email.com"
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">密码</label>
               <div className="relative">
@@ -71,7 +73,8 @@ export function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="请输入密码"
-                  className="w-full pl-12 pr-12 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                  disabled={isLoading}
+                  className="w-full pl-12 pr-12 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
                 />
                 <button
                   type="button"
@@ -82,16 +85,26 @@ export function Login() {
                 </button>
               </div>
             </div>
-            
+
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all flex items-center justify-center gap-2"
+              disabled={isLoading || !email || !password}
+              className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-blue-500/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              登录
-              <ArrowRight className="w-5 h-5" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  登录中...
+                </>
+              ) : (
+                <>
+                  登录
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </button>
           </form>
-          
+
           <div className="mt-6 text-center">
             <p className="text-gray-500 text-sm">
               还没有账户？{' '}
@@ -100,12 +113,6 @@ export function Login() {
               </Link>
             </p>
           </div>
-        </div>
-        
-        <div className="mt-6 text-center">
-          <p className="text-gray-400 text-sm">
-            演示账户：demo@example.com / password
-          </p>
         </div>
       </div>
     </div>

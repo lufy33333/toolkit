@@ -47,7 +47,7 @@ export function Dashboard() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">我的仪表盘</h1>
-              <p className="text-gray-500">欢迎回来，{user?.name}</p>
+              <p className="text-gray-500">欢迎回来，{user?.username}</p>
             </div>
             <button
               onClick={logout}
